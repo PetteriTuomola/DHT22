@@ -76,7 +76,7 @@ class DHT22:
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
 
         # collect data into an array
-        data = self.__collect_input()
+        data = np.array(self.__collect_input())
         print((data[1:] - data[:-1]) / 1000)
 
         # parse lengths of all data pull up periods
