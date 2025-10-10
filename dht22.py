@@ -47,13 +47,13 @@ class DHT22:
         # pull down to low
         # self.__send_and_sleep(RPi.GPIO.LOW, 0.02)
         # see https://www.souichi.club/raspberrypi/temperature-and-humidity02/
-        self.__send_and_sleep(GPIO.LOW, 0.001)
+        self.__send_and_sleep(GPIO.LOW, 0.002)
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
 
-        GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.__mycb1)
-        time.sleep(2)
+        GPIO.add_event_detect(self.__pin, GPIO.FALLING, callback=self.__mycb1)
+        time.sleep(4)
         GPIO.remove_event_detect(self.__pin)
         data = np.array(self.__data)
         print((data[1:] - data[:-1]) / 1000)
