@@ -27,21 +27,12 @@ class DHT22:
     'DHT22 sensor reader class for Raspberry'
 
     __pin = 0
-    __last_read_time = 0
-    __data = np.zeros(45)
-    __index = 0
 
     def __init__(self, pin):
         self.__pin = pin
 
-    def time_event(self, pin):
-        self.__data[self.__index] = time.time_ns() - self.__last_read_time
-        self.__last_read_time = time.time_ns()
-        self.__index += 1
-
 
     def read(self):
-        self.__index = 0
         GPIO.setup(self.__pin, GPIO.OUT)
 
         # send initial high
@@ -54,29 +45,28 @@ class DHT22:
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
-        self.__last_read_time = time.time_ns()
-        GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.time_event)
 
         # collect data into an array
         data = self.__collect_input()
+        print(data)
 
         # parse lengths of all data pull up periods
-        pull_up_lengths = self.__parse_data_pull_up_lengths(data)
-
+        #pull_up_lengths = self.__parse_data_pull_up_lengths(data)
+        
         # if bit count mismatch, return error (4 byte data + 1 byte checksum)
-        if len(pull_up_lengths) != 40:
-            return DHT22Result(DHT22Result.ERR_MISSING_DATA, 0, 0)
+        #if len(pull_up_lengths) != 40:
+        #    return DHT22Result(DHT22Result.ERR_MISSING_DATA, 0, 0)
 
         # calculate bits from lengths of the pull up periods
-        bits = self.__calculate_bits(pull_up_lengths)
+        #bits = self.__calculate_bits(pull_up_lengths)
 
         # we have the bits, calculate bytes
-        the_bytes = self.__bits_to_bytes(bits)
+        #the_bytes = self.__bits_to_bytes(bits)
 
         # calculate checksum and check
-        checksum = self.__calculate_checksum(the_bytes)
-        if the_bytes[4] != checksum:
-            return DHT22Result(DHT22Result.ERR_CRC, 0, 0)
+        #checksum = self.__calculate_checksum(the_bytes)
+        #if the_bytes[4] != checksum:
+        #    return DHT22Result(DHT22Result.ERR_CRC, 0, 0)
 
         # ok, we have valid data
 
@@ -90,11 +80,11 @@ class DHT22:
         #humidity = the_bytes[0] + float(the_bytes[1]) / 10
         
         # https://www.souichi.club/raspberrypi/temperature-and-humidity02/
-        temperature = ((the_bytes[2]*256) + the_bytes[3]) / 10
-        humidity = ((the_bytes[0]*256) + the_bytes[1]) / 10
-        print(self.__data)
+        #temperature = ((the_bytes[2]*256) + the_bytes[3]) / 10
+        #humidity = ((the_bytes[0]*256) + the_bytes[1]) / 10
 
-        return DHT22Result(DHT22Result.ERR_NO_ERROR, temperature, humidity)
+        #return DHT22Result(DHT22Result.ERR_NO_ERROR, temperature, humidity)
+        return DHT22Result(DHT22Result.ERR_NO_ERROR, 10, 10)
 
     def __send_and_sleep(self, output, sleep):
         GPIO.output(self.__pin, output)
@@ -102,24 +92,13 @@ class DHT22:
 
     def __collect_input(self):
 
-        # collect the data while unchanged found
-        unchanged_count = 0
-
-        # this is used to determine where is the end of the data
-        max_unchanged_count = 100
-
-        last = -1
-        data = []
-        while True:
-            current = GPIO.input(self.__pin)
-            data.append(current)
-            if last != current:
-                unchanged_count = 0
-                last = current
-            else:
-                unchanged_count += 1
-                if unchanged_count > max_unchanged_count:
-                    break
+        data = np.zeros(45)
+        for i in range(0, 45):
+            channel = GPIO.wait_for_edge(self.__pin, GPIO.RISING, timeout=0.1)
+            if channel is None:
+                print(i)
+                break
+            data[i] = channel
 
         return data
 
