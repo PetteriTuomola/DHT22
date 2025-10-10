@@ -56,6 +56,8 @@ class DHT22:
         time.sleep(2)
         GPIO.remove_event_detect(self.__pin)
         print(self.__data)
+        print(sum(self.__data))
+        self.__data = []
 
         return DHT22Result(DHT22Result.ERR_NO_ERROR, 10, 10)
 
