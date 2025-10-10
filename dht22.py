@@ -32,10 +32,10 @@ class DHT22:
     def __init__(self, pin):
         self.__pin = pin
 
-    def __mycb1(self):
+    def __mycb1(self, channel):
         self.__data.append(time.time_ns())
 
-    def __mycb2(self):
+    def __mycb2(self, channel):
         self.__data.append(-1)
 
     def read(self):
