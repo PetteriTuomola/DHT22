@@ -94,11 +94,11 @@ class DHT22:
 
         data = np.zeros(45)
         for i in range(0, 45):
-            channel = GPIO.wait_for_edge(self.__pin, GPIO.RISING, timeout=1)
+            channel = GPIO.wait_for_edge(self.__pin, GPIO.RISING, timeout=50)
             if channel is None:
                 print(i)
                 break
-            data[i] = channel
+            data[i] = time.time_ns()
 
         return data
 
