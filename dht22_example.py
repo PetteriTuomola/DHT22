@@ -7,8 +7,8 @@ import datetime
 GPIO.setwarnings(True)
 GPIO.setmode(GPIO.BOARD)
 
-# read data using pin 7
-instance = dht22.DHT22(pin=7)
+# read data using pin 3
+instance = dht22.DHT22(pin=3)
 success = 0
 fail = 0
 
