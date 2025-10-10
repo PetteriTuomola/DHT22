@@ -29,7 +29,6 @@ class DHT22:
 
     def __init__(self, pin):
         self.__pin = pin
-        GPIO.add_event_detect(self.__pin, GPIO.BOTH, callback=self.time_event)
 
     def time_event(self, pin):
         print("Event detected at pin %d" % pin)
@@ -47,6 +46,7 @@ class DHT22:
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
+        GPIO.add_event_detect(self.__pin, GPIO.BOTH, callback=self.time_event)
 
         # collect data into an array
         data = self.__collect_input()
