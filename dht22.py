@@ -95,11 +95,11 @@ class DHT22:
         timenow = time.time_ns()
         data = np.zeros(45)
         for i in range(0, 45):
-            channel = GPIO.wait_for_edge(self.__pin, GPIO.RISING, timeout=500)
+            channel = GPIO.wait_for_edge(self.__pin, GPIO.BOTH, timeout=2000)
             if channel is None:
                 print(i)
                 break
-            data[i] = time.time_ns() - timenow
+            data[i] = (time.time_ns() - timenow) / 1000
             timenow = time.time_ns()
 
         return data
