@@ -53,7 +53,6 @@ class DHT22:
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
 
         GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.__mycb1)
-        GPIO.add_event_detect(self.__pin, GPIO.FALLING, callback=self.__mycb2)
         time.sleep(2)
         GPIO.remove_event_detect(self.__pin)
         print(self.__data)
