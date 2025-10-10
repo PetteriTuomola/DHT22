@@ -27,12 +27,40 @@ class DHT22:
     'DHT22 sensor reader class for Raspberry'
 
     __pin = 0
+    __data = []
 
     def __init__(self, pin):
         self.__pin = pin
 
+    def __mycb1(self, channel):
+        self.__data.append(1)
+
+    def __mycb2(self, channel):
+        self.__data.append(-1)
 
     def read(self):
+        GPIO.setup(self.__pin, GPIO.OUT)
+
+        # send initial high
+        self.__send_and_sleep(GPIO.HIGH, 0.05)
+
+        # pull down to low
+        # self.__send_and_sleep(RPi.GPIO.LOW, 0.02)
+        # see https://www.souichi.club/raspberrypi/temperature-and-humidity02/
+        self.__send_and_sleep(GPIO.LOW, 0.0008)
+
+        # change to input using pull up
+        GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
+
+        GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.__mycb1)
+        GPIO.add_event_detect(self.__pin, GPIO.FALLING, callback=self.__mycb2)
+        time.sleep(2)
+        GPIO.remove_event_detect(self.__pin)
+        print(self.__data)
+
+        return DHT22Result(DHT22Result.ERR_NO_ERROR, 10, 10)
+
+    def read2(self):
         GPIO.setup(self.__pin, GPIO.OUT)
 
         # send initial high
@@ -90,18 +118,8 @@ class DHT22:
         GPIO.output(self.__pin, output)
         time.sleep(sleep)
 
-    def __mycb1(self, channel):
-        print("Rising edge detected on channel %s" % channel)
-        return GPIO.input(channel)
-
-    def __mycb2(self, channel):
-        print("Falling edge detected on channel %s" % channel)
-        return GPIO.input(channel)
-
     def __collect_input(self):
 
-        GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.__mycb1)
-        GPIO.add_event_detect(self.__pin, GPIO.FALLING, callback=self.__mycb2)
         timenow = time.time_ns()
         data = []
         time.sleep(2)
