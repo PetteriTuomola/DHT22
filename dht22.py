@@ -50,7 +50,7 @@ class DHT22:
         self.__send_and_sleep(GPIO.LOW, 0.002)
 
         # change to input using pull up
-        GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
+        GPIO.setup(self.__pin, GPIO.IN)
 
         GPIO.add_event_detect(self.__pin, GPIO.FALLING, callback=self.__mycb1)
         time.sleep(4)
