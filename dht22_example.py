@@ -9,6 +9,8 @@ GPIO.setmode(GPIO.BOARD)
 
 # read data using pin 7
 instance = dht22.DHT22(pin=7)
+success = 0
+fail = 0
 
 try:
 	while True:
@@ -17,9 +19,12 @@ try:
 			print("Last valid input: " + str(datetime.datetime.now()))
 			print("Temperature: %-3.1f C" % result.temperature)
 			print("Humidity: %-3.1f %%" % result.humidity)
+			success += 1
 		else:
-			print("Non-valid input: " + str(result.error_code))
+			fail += 1
 		time.sleep(2)
+		if (success + fail) % 150 == 0:
+			print("Success: %d, Fail: %d" % (success, fail))
 
 except KeyboardInterrupt:
     print("\nCleanup")
