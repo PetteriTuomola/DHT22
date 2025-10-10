@@ -90,16 +90,28 @@ class DHT22:
         GPIO.output(self.__pin, output)
         time.sleep(sleep)
 
+    def __mycb1(self, channel):
+        print("Rising edge detected on channel %s" % channel)
+        return GPIO.input(channel)
+
+    def __mycb2(self, channel):
+        print("Falling edge detected on channel %s" % channel)
+        return GPIO.input(channel)
+
     def __collect_input(self):
 
+        GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.__mycb1)
+        GPIO.add_event_detect(self.__pin, GPIO.FALLING, callback=self.__mycb2)
         timenow = time.time_ns()
         data = []
-        for i in range(0, 45):
-            channel = GPIO.wait_for_edge(self.__pin, GPIO.FALLING, timeout=2000)
-            if channel is None:
-                print(i)
-                break
-            data.append(channel)
+        time.sleep(2)
+#        for i in range(0, 45):
+#            channel = GPIO.wait_for_edge(self.__pin, GPIO.FALLING, timeout=2000)
+#            if channel is None:
+#                print(i)
+#                break
+#            data.append((time.time_ns() - timenow) / 1000)
+#            timenow = time.time_ns()
 
         return data
 
