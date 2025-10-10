@@ -32,10 +32,10 @@ class DHT22:
     def __init__(self, pin):
         self.__pin = pin
 
-    def __mycb1(self, channel):
-        self.__data.append(1)
+    def __mycb1(self):
+        self.__data.append(time.time_ns())
 
-    def __mycb2(self, channel):
+    def __mycb2(self):
         self.__data.append(-1)
 
     def read(self):
@@ -47,7 +47,7 @@ class DHT22:
         # pull down to low
         # self.__send_and_sleep(RPi.GPIO.LOW, 0.02)
         # see https://www.souichi.club/raspberrypi/temperature-and-humidity02/
-        self.__send_and_sleep(GPIO.LOW, 0.0008)
+        self.__send_and_sleep(GPIO.LOW, 0.001)
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
@@ -77,7 +77,7 @@ class DHT22:
 
         # collect data into an array
         data = self.__collect_input()
-        print(data)
+        print((data[1:] - data[:-1]) / 1000)
 
         # parse lengths of all data pull up periods
         #pull_up_lengths = self.__parse_data_pull_up_lengths(data)
