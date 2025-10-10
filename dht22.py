@@ -41,7 +41,7 @@ class DHT22:
         # pull down to low
         # self.__send_and_sleep(RPi.GPIO.LOW, 0.02)
         # see https://www.souichi.club/raspberrypi/temperature-and-humidity02/
-        self.__send_and_sleep(GPIO.LOW, 0.001)
+        self.__send_and_sleep(GPIO.LOW, 0.002)
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
@@ -92,13 +92,15 @@ class DHT22:
 
     def __collect_input(self):
 
+        timenow = time.time_ns()
         data = np.zeros(45)
         for i in range(0, 45):
-            channel = GPIO.wait_for_edge(self.__pin, GPIO.RISING, timeout=50)
+            channel = GPIO.wait_for_edge(self.__pin, GPIO.RISING, timeout=500)
             if channel is None:
                 print(i)
                 break
-            data[i] = time.time_ns()
+            data[i] = time.time_ns() - timenow
+            timenow = time.time_ns()
 
         return data
 
