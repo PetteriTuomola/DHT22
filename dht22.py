@@ -28,7 +28,7 @@ class DHT22:
 
     __pin = 0
     __last_read_time = 0
-    __data = np.array(45)
+    __data = np.zeros(45)
     __index = 0
 
     def __init__(self, pin):
