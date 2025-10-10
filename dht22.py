@@ -41,7 +41,7 @@ class DHT22:
         # pull down to low
         # self.__send_and_sleep(RPi.GPIO.LOW, 0.02)
         # see https://www.souichi.club/raspberrypi/temperature-and-humidity02/
-        self.__send_and_sleep(GPIO.LOW, 0.002)
+        self.__send_and_sleep(GPIO.LOW, 0.0008)
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
