@@ -55,8 +55,9 @@ class DHT22:
         GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.__mycb1)
         time.sleep(2)
         GPIO.remove_event_detect(self.__pin)
-        print(self.__data)
-        print(sum(self.__data))
+        data = np.array(self.__data)
+        print((data[1:] - data[:-1]) / 1000)
+        print(len(data))
         self.__data = []
 
         return DHT22Result(DHT22Result.ERR_NO_ERROR, 10, 10)
