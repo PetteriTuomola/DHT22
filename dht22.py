@@ -29,7 +29,7 @@ class DHT22:
 
     def __init__(self, pin):
         self.__pin = pin
-        GPIO.add_event_detect(self.__pin, GPIO.BOTH, callback=time_event)
+        GPIO.add_event_detect(self.__pin, GPIO.BOTH, callback=self.time_event)
 
     def time_event(self, pin):
         print("Event detected at pin %d" % pin)
