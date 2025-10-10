@@ -1,4 +1,5 @@
 import time
+import numpy as np
 import RPi.GPIO as GPIO
 
 
@@ -26,14 +27,21 @@ class DHT22:
     'DHT22 sensor reader class for Raspberry'
 
     __pin = 0
+    __last_read_time = 0
+    __data = np.array(45)
+    __index = 0
 
     def __init__(self, pin):
         self.__pin = pin
 
     def time_event(self, pin):
-        print("Event detected at pin %d" % pin)
+        self.__data[self.__index] = time.time_ns() - self.__last_read_time
+        self.__last_read_time = time.time_ns()
+        self.__index += 1
+
 
     def read(self):
+        self.__index = 0
         GPIO.setup(self.__pin, GPIO.OUT)
 
         # send initial high
@@ -46,7 +54,8 @@ class DHT22:
 
         # change to input using pull up
         GPIO.setup(self.__pin, GPIO.IN, GPIO.PUD_UP)
-        GPIO.add_event_detect(self.__pin, GPIO.BOTH, callback=self.time_event)
+        self.__last_read_time = time.time_ns()
+        GPIO.add_event_detect(self.__pin, GPIO.RISING, callback=self.time_event)
 
         # collect data into an array
         data = self.__collect_input()
@@ -83,6 +92,7 @@ class DHT22:
         # https://www.souichi.club/raspberrypi/temperature-and-humidity02/
         temperature = ((the_bytes[2]*256) + the_bytes[3]) / 10
         humidity = ((the_bytes[0]*256) + the_bytes[1]) / 10
+        print(self.__data)
 
         return DHT22Result(DHT22Result.ERR_NO_ERROR, temperature, humidity)
 
