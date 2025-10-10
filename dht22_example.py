@@ -18,7 +18,7 @@ try:
 			print("Temperature: %-3.1f C" % result.temperature)
 			print("Humidity: %-3.1f %%" % result.humidity)
 		else:
-			print("Non-valid input.")
+			print("Non-valid input: " + str(result.error_code))
 		time.sleep(2)
 
 except KeyboardInterrupt:
