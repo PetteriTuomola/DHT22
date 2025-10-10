@@ -99,8 +99,7 @@ class DHT22:
             if channel is None:
                 print(i)
                 break
-            data.append((time.time_ns() - timenow) / 1000)
-            timenow = time.time_ns()
+            data.append(channel)
 
         return data
 
