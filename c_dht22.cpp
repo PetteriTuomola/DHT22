@@ -4,7 +4,7 @@
 
 static int edgecounter;
 
-statid void cb_both() {
+static void cb_both() {
     edgecounter++;
 }
 
