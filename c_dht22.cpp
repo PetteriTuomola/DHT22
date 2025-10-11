@@ -6,8 +6,8 @@ static int edgecounter;
 
 static void cb_both(WPIWfiStatus status, void* userdata) {
     edgecounter++;
-    if (edgecounter % 10 == 0) {
-        std::cout << "ten" << std::endl;
+    if (edgecounter > 60) {
+        std::cout << edgecounter << std::endl;
     }
 }
 
