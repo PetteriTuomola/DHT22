@@ -42,7 +42,7 @@ class DHT22:
         self.__send_and_sleep(RPi.GPIO.LOW, 0.001)
 
         # change to input using pull up
-        RPi.GPIO.setup(self.__pin, RPi.GPIO.IN, RPi.GPIO.PUD_UP)
+        RPi.GPIO.setup(self.__pin, RPi.GPIO.IN)
 
         # collect data into an array
         data = self.__collect_input()
