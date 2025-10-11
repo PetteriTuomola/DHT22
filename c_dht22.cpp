@@ -34,10 +34,10 @@ int main() {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 8; j++) {
                 int time_diff = timedata[offset + j + i * 8 + 1] - timedata[offset + j + i * 8];
-                if (time_diff > 45) bytes[i] += std::pow(2, i);
+                if (time_diff > 45) bytes[i] += std::pow(2, j);
             }
         }
-        if ((bytes[0] + bytes[1] + bytes[2] + bytes[3]) & 0xFF != bytes[4]) {
+        if ((bytes[0] + bytes[1] + bytes[2] + bytes[3]) % 256 != bytes[4]) {
             printf("Checksum error\n");
             continue;
         }
