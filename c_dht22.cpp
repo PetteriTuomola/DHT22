@@ -34,7 +34,7 @@ int main() {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 16; j += 2) {
                 int time_diff = timedata[offset + j + i * 16 + 1] - timedata[offset + j + i * 16];
-                if (time_diff > 45) bytes[i] += std::pow(2, j);
+                if (time_diff > 45) bytes[i] += std::pow(2, 7 - j / 2);
             }
         }
         if ((bytes[0] + bytes[1] + bytes[2] + bytes[3]) % 256 != bytes[4]) {
