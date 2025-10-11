@@ -30,6 +30,6 @@ int main() {
         wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL);
         sleep(3);
         printf("Rising edges: %d, Falling edges: %d\n", edgeupcounter, edgedowncounter);
-        return 0;
     }
+    return 0;
 }
