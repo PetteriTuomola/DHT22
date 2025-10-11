@@ -79,6 +79,7 @@ class DHT22:
         # https://www.souichi.club/raspberrypi/temperature-and-humidity02/
         temperature = ((the_bytes[2]*256) + the_bytes[3]) / 10
         humidity = ((the_bytes[0]*256) + the_bytes[1]) / 10
+        print(data)
         print(pull_up_lengths)
         print(bits)
         print(the_bytes)
@@ -94,7 +95,7 @@ class DHT22:
         unchanged_count = 0
 
         # this is used to determine where is the end of the data
-        max_unchanged_count = 100
+        max_unchanged_count = 200
 
         last = -1
         data = []
