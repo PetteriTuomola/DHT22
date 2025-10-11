@@ -8,7 +8,7 @@ static int index;
 
 static void cb_both(WPIWfiStatus status, void* userdata) {
     edgecounter++;
-    timedata[index] = status.time_Stamp_um;
+    timedata[index] = status.timeStamp_um;
     index++;
 }
 
@@ -28,7 +28,7 @@ int main() {
 
         sleep(3);
         for (int j = 0; j < 89; j++) {
-            std::cout << (timedata[j + 1] - timedata[j]) / 1000 << ", ";
+            std::cout << timedata[j + 1] - timedata[j] << ", ";
         }
         printf("\n");
         printf("Edge count: %d\n", edgecounter);
