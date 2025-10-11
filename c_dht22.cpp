@@ -17,7 +17,6 @@ int main() {
     wiringPiISR(pin, INT_EDGE_BOTH, []() {
         edgecounter++;
     });
-    sleep(2);
     std::cout << "Edge count: " << edgecounter << std::endl;
     return 0;
 }
