@@ -6,9 +6,9 @@ static int edgeupcounter;
 static int edgedowncounter;
 
 static void cb_both(WPIWfiStatus status, void* userdata) {
-    if (status.edge == INT_EDGE_RISING)
+    if (status.edge == INT_EDGE_RISING && status.statusOK == 1)
         edgeupcounter++;
-    else if (status.edge == INT_EDGE_FALLING)
+    else if (status.statusOK == 1)
         edgedowncounter++;
 }
 
