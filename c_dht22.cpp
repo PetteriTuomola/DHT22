@@ -26,3 +26,5 @@ int main() {
     std::cout << "Edge count: " << edgecounter << std::endl;
     return 0;
 }
+
+main()
