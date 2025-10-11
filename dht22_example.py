@@ -3,16 +3,17 @@ import dht22
 import time
 import datetime
 
-# initialize GPIO
-GPIO.setwarnings(True)
-GPIO.setmode(GPIO.BOARD)
 
-# read data using pin 3
-instance = dht22.DHT22(pin=3)
-success = 0
-fail = 0
+def main():
+	# initialize GPIO
+	GPIO.setwarnings(True)
+	GPIO.setmode(GPIO.BOARD)
 
-try:
+	# read data using pin 3
+	instance = dht22.DHT22(pin=3)
+	success = 0
+	fail = 0
+
 	while True:
 		result = instance.read()
 		if result.is_valid():
@@ -22,10 +23,8 @@ try:
 			success += 1
 		else:
 			fail += 1
-		time.sleep(2)
 		if (success + fail) % 150 == 0:
 			print("Success: %d, Fail: %d" % (success, fail))
+		time.sleep(4)
 
-except KeyboardInterrupt:
-    print("\nCleanup")
-    GPIO.cleanup()
+main()
