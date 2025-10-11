@@ -32,8 +32,8 @@ int main() {
         int offset = 4;
         if (timedata[2] - timedata[1] < 40) offset++; // Sometimes it detects the first up, this corrects for that
         for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 8; j++) {
-                int time_diff = timedata[offset + j + i * 8 + 1] - timedata[offset + j + i * 8];
+            for (int j = 0; j < 16; j += 2) {
+                int time_diff = timedata[offset + j + i * 16 + 1] - timedata[offset + j + i * 16];
                 if (time_diff > 45) bytes[i] += std::pow(2, j);
             }
         }
