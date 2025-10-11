@@ -2,13 +2,14 @@
 #include <iostream>
 #include <unistd.h>
 
-static int edgecounter;
+static int edgeupcounter;
+static int edgedowncounter;
 
 static void cb_both(WPIWfiStatus status, void* userdata) {
-    edgecounter++;
-    if (edgecounter > 60) {
-        std::cout << edgecounter << std::endl;
-    }
+    if (status.edge == INT_EDGE_RISING)
+        edgeupcounter++;
+    else if (status.edge == INT_EDGE_FALLING)
+        edgedowncounter++;
 }
 
 
@@ -16,7 +17,8 @@ int main() {
     int pin = 3; // GPIO pin number
     wiringPiSetupPinType(WPI_PIN_PHYS);
     for (int i = 0; i < 100; i++) {
-        edgecounter = 0;
+        edgeupcounter = 0;
+        edgedowncounter = 0;
         pinMode(pin, OUTPUT);
         digitalWrite(pin, 1);
         usleep(50000);
@@ -26,8 +28,8 @@ int main() {
         pullUpDnControl(pin, PUD_UP);
 
         wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL);
-        getc(stdin);
-        std::cout << "Edge count: " << edgecounter << std::endl;
+        sleep(3);
+        printf("Rising edges: %d, Falling edges: %d\n", edgeupcounter, edgedowncounter);
         return 0;
     }
 }
