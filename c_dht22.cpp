@@ -2,14 +2,14 @@
 #include <iostream>
 #include <unistd.h>
 
-static int edgeupcounter;
-static int edgedowncounter;
+static int edgecounter;
+static long long int timedata[90];
+static int index;
 
 static void cb_both(WPIWfiStatus status, void* userdata) {
-    if (status.edge == INT_EDGE_RISING && status.statusOK == 1)
-        edgeupcounter++;
-    else if (status.statusOK == 1)
-        edgedowncounter++;
+    edgecounter++;
+    timedata[index] = status.time_Stamp_um;
+    index++;
 }
 
 
@@ -18,8 +18,8 @@ int main() {
     wiringPiSetupPinType(WPI_PIN_PHYS);
     wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL);
     for (int i = 0; i < 100; i++) {
-        edgeupcounter = 0;
-        edgedowncounter = 0;
+        edgecounter = 0;
+        index = 0;
         pinMode(pin, OUTPUT);
         digitalWrite(pin, 0);
         usleep(2000);
@@ -27,7 +27,11 @@ int main() {
         pullUpDnControl(pin, PUD_UP);
 
         sleep(3);
-        printf("Rising edges: %d, Falling edges: %d\n", edgeupcounter, edgedowncounter);
+        for (int j = 0; j < 89; j++) {
+            std::cout << (timedata[j + 1] - timedata[j]) / 1000 << ", ";
+        }
+        printf("\n");
+        printf("Edge count: %d\n", edgecounter);
     }
     return 0;
 }
