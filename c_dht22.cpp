@@ -1,5 +1,6 @@
 #include <wiringPi.h>
 #include <iostream>
+#include <cmath>
 #include <unistd.h>
 
 static int edgecounter;
