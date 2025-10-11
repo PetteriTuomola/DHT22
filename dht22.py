@@ -79,6 +79,9 @@ class DHT22:
         # https://www.souichi.club/raspberrypi/temperature-and-humidity02/
         temperature = ((the_bytes[2]*256) + the_bytes[3]) / 10
         humidity = ((the_bytes[0]*256) + the_bytes[1]) / 10
+        print(pull_up_lengths)
+        print(bits)
+        print(the_bytes)
 
         return DHT22Result(DHT22Result.ERR_NO_ERROR, temperature, humidity)
 
