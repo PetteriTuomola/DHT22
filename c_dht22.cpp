@@ -25,7 +25,8 @@ int main() {
         pinMode(pin, INPUT);
         pullUpDnControl(pin, PUD_UP);
 
-        wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 20000, NULL);
+        wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL);
+        getc(stdin);
         std::cout << "Edge count: " << edgecounter << std::endl;
         return 0;
     }
