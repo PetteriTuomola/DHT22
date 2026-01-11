@@ -7,6 +7,8 @@
 #include <fstream>
 #include <unistd.h>
 
+const static int pin = 3; // GPIO pin number
+const static int freq = 5; // Every what minute should we do a measurement. Assumed to be a factor of 60 for now.
 const static int batchsize = 5;
 static int edgecounter;
 static std::array<long long int, 90> timedata; // There are ~85 edges to record
@@ -19,10 +21,15 @@ static void cb_both(WPIWfiStatus status, void* userdata) {
 }
 
 
-int main() {
-    int pin = 3; // GPIO pin number
-    wiringPiSetupPinType(WPI_PIN_PHYS); // Use physical pin numbering for the Pi
-    wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL); // Set an ISR function on edge detection
+// Return the amount of seconds until the next measurement
+static int timetowait(std::time_t timenow) {
+    const std::tm cal_time = *std::localtime(std::addressof(timenow));
+    return (freq - cal_time.tm_min % freq) * 60 - cal_time.tm_sec;
+}
+
+
+// Perform a measurement and log it
+static void measure() {
     float humidity = 0;
     float temperature = 0;
     for (int i = 0; i < batchsize; i++) {
@@ -52,12 +59,27 @@ int main() {
         temperature += ((bytes[2] * 256) + bytes[3]) * 0.1;
         sleep(1);
     }
-    std::ofstream data("data.txt");
+    std::fstream data("data.txt", std::ios::app);
     std::time_t time = std::time(nullptr);
     data << humidity / batchsize << ",";
     data << temperature / batchsize << ",";
     data << std::put_time(std::localtime(&time), "%Y %m %d %H:%M") << std::endl;
     data.close();
+}
+
+
+int main() {
+    wiringPiSetupPinType(WPI_PIN_PHYS); // Use physical pin numbering for the Pi
+    wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL); // Set an ISR function on edge detection
+    std::time_t time = std::time(nullptr);
+    while (true) {
+        int waittime = timetowait(time);
+        std::cout << "Waiting" << std::endl;
+        sleep(waittime);
+        measure();
+        std::time(&time);
+        std::cout << "Measurement done!" << std::endl;
+    }
 
     return 0;
 }
