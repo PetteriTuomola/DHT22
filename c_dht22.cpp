@@ -2,8 +2,11 @@
 #include <iostream>
 #include <cmath>
 #include <array>
+#include <ctime>
+#include <iomanip>
 #include <unistd.h>
 
+const static int batchsize = 5;
 static int edgecounter;
 static std::array<long long int, 90> timedata; // There are ~85 edges to record
 
@@ -19,7 +22,9 @@ int main() {
     int pin = 3; // GPIO pin number
     wiringPiSetupPinType(WPI_PIN_PHYS); // Use physical pin numbering for the Pi
     wiringPiISR2(pin, INT_EDGE_BOTH, &cb_both, 0, NULL); // Set an ISR function on edge detection
-    for (int i = 0; i < 100; i++) {
+    float humidity = 0;
+    float temperature = 0;
+    for (int i = 0; i < batchsize; i++) {
         timedata.fill(0);
         edgecounter = 0;
         pinMode(pin, OUTPUT); // Set the pin as output to send the first master signal
@@ -31,22 +36,25 @@ int main() {
         int bytes[5] = {0, 0, 0, 0, 0};
         int offset = 4; // The first four edges are the initial set-up signals
         if (timedata[2] - timedata[1] < 40) offset++; // Sometimes it detects the first up, this corrects for that
-        for (int i = 0; i < 5; i++) {
+        for (int k = 0; k < 5; k++) {
             for (int j = 0; j < 16; j += 2) {
-                int time_diff = timedata[offset + j + i * 16 + 1] - timedata[offset + j + i * 16]; // Calculate the pulse length
-                if (time_diff > 45) bytes[i] += std::pow(2, 7 - j / 2); // Check if 0 or 1 and convert to base-10
+                int time_diff = timedata[offset + j + k * 16 + 1] - timedata[offset + j + k * 16]; // Calculate the pulse length
+                if (time_diff > 45) bytes[k] += std::pow(2, 7 - j / 2); // Check if 0 or 1 and convert to base-10
             }
         }
         if ((bytes[0] + bytes[1] + bytes[2] + bytes[3]) % 256 != bytes[4]) { // Check that the data is valid
             printf("Checksum error\n");
+            i--;
             continue;
         }
-        float humidity = ((bytes[0] * 256) + bytes[1]) * 0.1;
-        float temperature = ((bytes[2] * 256) + bytes[3]) * 0.1;
-        printf("Humidity: %.1f %%\n", humidity);
-        printf("Temperature: %.1f C\n", temperature);
-        printf("Edge count: %d\n", edgecounter);
+        humidity += ((bytes[0] * 256) + bytes[1]) * 0.1;
+        temperature += ((bytes[2] * 256) + bytes[3]) * 0.1;
         sleep(1);
     }
+    std::time_t time = std::time(nullptr);
+    printf("Humidity: %.1f %%\n", humidity / batchsize);
+    printf("Temperature: %.1f C\n", temperature / batchsize);
+    printf("Edge count: %d\n", edgecounter);
+    std::cout << "Time: " << std::put_time(std::localtime(&time), "%c %Z") << '\n';
     return 0;
 }
