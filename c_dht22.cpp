@@ -4,6 +4,7 @@
 #include <array>
 #include <ctime>
 #include <iomanip>
+#include <fstream>
 #include <unistd.h>
 
 const static int batchsize = 5;
@@ -51,10 +52,12 @@ int main() {
         temperature += ((bytes[2] * 256) + bytes[3]) * 0.1;
         sleep(1);
     }
+    std::ofstream data("data.txt");
     std::time_t time = std::time(nullptr);
-    printf("Humidity: %.1f %%\n", humidity / batchsize);
-    printf("Temperature: %.1f C\n", temperature / batchsize);
-    printf("Edge count: %d\n", edgecounter);
-    std::cout << "Time: " << std::put_time(std::localtime(&time), "%c %Z") << '\n';
+    data << humidity / batchsize << ",";
+    data << temperature / batchsize << ",";
+    data << std::put_time(std::localtime(&time), "%Y %m %d %H:%M") << std::endl;
+    data.close();
+
     return 0;
 }
