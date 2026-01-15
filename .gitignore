@@ -1,2 +1,4 @@
 templog
 *.txt
+*.o
+*.so
